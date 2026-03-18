@@ -1,0 +1,87 @@
+<style>
+  .status-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8;
+    width: 40;
+    background-color: #1a1a2e;
+    border-color: #2a2a4e;
+    border-width: 0.08;
+    border-radius: 1;
+  }
+
+  .status-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .status-dot {
+    width: 1.2;
+    height: 1.2;
+    border-radius: 0.6;
+    margin-right: 0.5;
+  }
+
+  .dot-connected {
+    width: 1.2;
+    height: 1.2;
+    border-radius: 0.6;
+    margin-right: 0.5;
+    background-color: #50fa7b;
+  }
+
+  .dot-disconnected {
+    width: 1.2;
+    height: 1.2;
+    border-radius: 0.6;
+    margin-right: 0.5;
+    background-color: #ff5555;
+  }
+
+  .dot-listening {
+    width: 1.2;
+    height: 1.2;
+    border-radius: 0.6;
+    margin-right: 0.5;
+    background-color: #00d4ff;
+  }
+
+  .dot-idle {
+    width: 1.2;
+    height: 1.2;
+    border-radius: 0.6;
+    margin-right: 0.5;
+    background-color: #44475a;
+  }
+
+  .status-label {
+    font-size: 1.4;
+    color: #a0a0c0;
+  }
+
+  .separator {
+    width: 0.08;
+    height: 2;
+    background-color: #2a2a4e;
+    margin-left: 1;
+    margin-right: 1;
+  }
+</style>
+<div class="status-bar">
+  <div class="status-group">
+    <div class="dot-connected" id="connection-dot"></div>
+    <span class="status-label" id="connection-label">Connected</span>
+  </div>
+  <div class="separator"></div>
+  <div class="status-group">
+    <div class="dot-idle" id="voice-dot"></div>
+    <span class="status-label" id="voice-label">Voice: Ready</span>
+  </div>
+  <div class="separator"></div>
+  <div class="status-group">
+    <span class="status-label" id="session-label">Session: —</span>
+  </div>
+</div>

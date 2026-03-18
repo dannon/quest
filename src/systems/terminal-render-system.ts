@@ -7,6 +7,8 @@ import {
   PlaneGeometry,
   SRGBColorSpace,
   DoubleSide,
+  Color,
+  BoxGeometry,
 } from '@iwsdk/core';
 import { TerminalPanel } from '../components/terminal-panel.js';
 import { TerminalBridge } from '../lib/terminal-bridge.js';
@@ -43,6 +45,18 @@ export class TerminalRenderSystem extends createSystem({
 
       const mesh = new Mesh(plane, material);
       const obj = entity.object3D!;
+
+      // Frame/bezel around the terminal
+      const frameW = 1.24;
+      const frameH = 0.76;
+      const frameD = 0.02;
+      const frameMat = new MeshBasicMaterial({
+        color: new Color(0x0a0a1e),
+        side: DoubleSide,
+      });
+      const frame = new Mesh(new BoxGeometry(frameW, frameH, frameD), frameMat);
+      frame.position.z = -0.011;
+      obj.add(frame);
       obj.add(mesh);
 
       // The texture will be set on first canvas availability
