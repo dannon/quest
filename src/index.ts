@@ -7,8 +7,12 @@ import {
 } from '@iwsdk/core';
 
 import { TerminalPanel } from './components/terminal-panel.js';
+import { PanelAnchor } from './components/panel-anchor.js';
+import { VoiceInput } from './components/voice-input.js';
 import { TerminalRenderSystem } from './systems/terminal-render-system.js';
 import { TerminalConnectionSystem } from './systems/terminal-connection-system.js';
+import { PanelManagementSystem } from './systems/panel-management-system.js';
+import { VoiceInputSystem } from './systems/voice-input-system.js';
 
 World.create(document.getElementById('scene-container') as HTMLDivElement, {
   xr: {
@@ -41,6 +45,8 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
       cols: 120,
       rows: 36,
     })
+    .addComponent(PanelAnchor)
+    .addComponent(VoiceInput)
     .addComponent(Interactable)
     .addComponent(DistanceGrabbable, {
       movementMode: MovementMode.MoveFromTarget,
@@ -50,5 +56,7 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
 
   world
     .registerSystem(TerminalRenderSystem)
-    .registerSystem(TerminalConnectionSystem);
+    .registerSystem(TerminalConnectionSystem)
+    .registerSystem(PanelManagementSystem)
+    .registerSystem(VoiceInputSystem);
 });
