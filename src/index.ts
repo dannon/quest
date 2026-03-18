@@ -4,15 +4,18 @@ import {
   Interactable,
   DistanceGrabbable,
   MovementMode,
+  PanelUI,
 } from '@iwsdk/core';
 
 import { TerminalPanel } from './components/terminal-panel.js';
 import { PanelAnchor } from './components/panel-anchor.js';
 import { VoiceInput } from './components/voice-input.js';
+import { VirtualKeyboard } from './components/virtual-keyboard.js';
 import { TerminalRenderSystem } from './systems/terminal-render-system.js';
 import { TerminalConnectionSystem } from './systems/terminal-connection-system.js';
 import { PanelManagementSystem } from './systems/panel-management-system.js';
 import { VoiceInputSystem } from './systems/voice-input-system.js';
+import { KeyboardSystem } from './systems/keyboard-system.js';
 
 World.create(document.getElementById('scene-container') as HTMLDivElement, {
   xr: {
@@ -54,9 +57,28 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
 
   terminalEntity.object3D!.position.set(0, 1.5, -1.5);
 
+  // Virtual keyboard: below the terminal panel
+  const keyboardEntity = world
+    .createTransformEntity()
+    .addComponent(PanelUI, {
+      config: './ui/keyboard.json',
+      maxHeight: 0.5,
+      maxWidth: 1.2,
+    })
+    .addComponent(VirtualKeyboard, {
+      targetTerminalIndex: terminalEntity.index,
+    })
+    .addComponent(Interactable)
+    .addComponent(DistanceGrabbable, {
+      movementMode: MovementMode.MoveFromTarget,
+    });
+
+  keyboardEntity.object3D!.position.set(0, 1.0, -1.3);
+
   world
     .registerSystem(TerminalRenderSystem)
     .registerSystem(TerminalConnectionSystem)
     .registerSystem(PanelManagementSystem)
-    .registerSystem(VoiceInputSystem);
+    .registerSystem(VoiceInputSystem)
+    .registerSystem(KeyboardSystem);
 });

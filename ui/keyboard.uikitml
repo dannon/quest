@@ -1,0 +1,161 @@
+<style>
+  .keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1;
+    background-color: #1a1a2e;
+    border-color: #2a2a4e;
+    border-width: 0.1;
+    border-radius: 1.5;
+    width: 80;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 0.3;
+  }
+
+  .key {
+    min-width: 5;
+    height: 5;
+    margin: 0.2;
+    padding: 0.8;
+    background-color: #2a2a4e;
+    color: #e0e0e0;
+    border-radius: 0.8;
+    border-width: 0.05;
+    border-color: #3a3a6e;
+    font-size: 2;
+    font-weight: medium;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .key-wide {
+    min-width: 8;
+    height: 5;
+    margin: 0.2;
+    padding: 0.8;
+    background-color: #3a3a5e;
+    color: #a0a0c0;
+    border-radius: 0.8;
+    border-width: 0.05;
+    border-color: #4a4a7e;
+    font-size: 1.6;
+    font-weight: medium;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .key-space {
+    min-width: 30;
+    height: 5;
+    margin: 0.2;
+    padding: 0.8;
+    background-color: #2a2a4e;
+    color: #e0e0e0;
+    border-radius: 0.8;
+    border-width: 0.05;
+    border-color: #3a3a6e;
+    font-size: 1.6;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .key-enter {
+    min-width: 10;
+    height: 5;
+    margin: 0.2;
+    padding: 0.8;
+    background-color: #00d4ff;
+    color: #1a1a2e;
+    border-radius: 0.8;
+    border-width: 0.05;
+    border-color: #00a4cc;
+    font-size: 1.6;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+  }
+</style>
+<div class="keyboard">
+  <!-- Number row -->
+  <div class="row">
+    <button class="key" id="key-backtick">`</button>
+    <button class="key" id="key-1">1</button>
+    <button class="key" id="key-2">2</button>
+    <button class="key" id="key-3">3</button>
+    <button class="key" id="key-4">4</button>
+    <button class="key" id="key-5">5</button>
+    <button class="key" id="key-6">6</button>
+    <button class="key" id="key-7">7</button>
+    <button class="key" id="key-8">8</button>
+    <button class="key" id="key-9">9</button>
+    <button class="key" id="key-0">0</button>
+    <button class="key" id="key-minus">-</button>
+    <button class="key" id="key-equals">=</button>
+    <button class="key-wide" id="key-backspace">Bksp</button>
+  </div>
+  <!-- Top row -->
+  <div class="row">
+    <button class="key-wide" id="key-tab">Tab</button>
+    <button class="key" id="key-q">q</button>
+    <button class="key" id="key-w">w</button>
+    <button class="key" id="key-e">e</button>
+    <button class="key" id="key-r">r</button>
+    <button class="key" id="key-t">t</button>
+    <button class="key" id="key-y">y</button>
+    <button class="key" id="key-u">u</button>
+    <button class="key" id="key-i">i</button>
+    <button class="key" id="key-o">o</button>
+    <button class="key" id="key-p">p</button>
+    <button class="key" id="key-lbracket">[</button>
+    <button class="key" id="key-rbracket">]</button>
+    <button class="key" id="key-backslash">\</button>
+  </div>
+  <!-- Home row -->
+  <div class="row">
+    <button class="key-wide" id="key-ctrl">Ctrl</button>
+    <button class="key" id="key-a">a</button>
+    <button class="key" id="key-s">s</button>
+    <button class="key" id="key-d">d</button>
+    <button class="key" id="key-f">f</button>
+    <button class="key" id="key-g">g</button>
+    <button class="key" id="key-h">h</button>
+    <button class="key" id="key-j">j</button>
+    <button class="key" id="key-k">k</button>
+    <button class="key" id="key-l">l</button>
+    <button class="key" id="key-semicolon">;</button>
+    <button class="key" id="key-quote">'</button>
+    <button class="key-enter" id="key-enter">Enter</button>
+  </div>
+  <!-- Bottom row -->
+  <div class="row">
+    <button class="key-wide" id="key-shift">Shift</button>
+    <button class="key" id="key-z">z</button>
+    <button class="key" id="key-x">x</button>
+    <button class="key" id="key-c">c</button>
+    <button class="key" id="key-v">v</button>
+    <button class="key" id="key-b">b</button>
+    <button class="key" id="key-n">n</button>
+    <button class="key" id="key-m">m</button>
+    <button class="key" id="key-comma">,</button>
+    <button class="key" id="key-period">.</button>
+    <button class="key" id="key-slash">/</button>
+    <button class="key-wide" id="key-shift2">Shift</button>
+  </div>
+  <!-- Space row -->
+  <div class="row">
+    <button class="key-wide" id="key-esc">Esc</button>
+    <button class="key" id="key-up">↑</button>
+    <button class="key" id="key-down">↓</button>
+    <button class="key" id="key-left">←</button>
+    <button class="key" id="key-right">→</button>
+    <button class="key-space" id="key-space">Space</button>
+    <button class="key-wide" id="key-ctrl-c">Ctrl+C</button>
+  </div>
+</div>
