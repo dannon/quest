@@ -1,0 +1,117 @@
+<style>
+  .connect-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 3;
+    width: 50;
+    background-color: #09090b;
+    border-color: #27272a;
+    border-width: 0.15;
+    border-radius: 3;
+  }
+
+  .title {
+    font-size: 4;
+    font-weight: bold;
+    color: #fafafa;
+    text-align: left;
+    margin-bottom: 0.5;
+  }
+
+  .subtitle {
+    font-size: 2;
+    color: #a1a1aa;
+    text-align: left;
+    margin-bottom: 2;
+  }
+
+  .label {
+    font-size: 1.8;
+    color: #d4d4d8;
+    margin-bottom: 0.5;
+  }
+
+  .host-display {
+    width: 100%;
+    padding: 1.2;
+    background-color: #18181b;
+    border-color: #3f3f46;
+    border-width: 0.1;
+    border-radius: 1;
+    font-size: 2;
+    color: #00d4ff;
+    margin-bottom: 1.5;
+    font-weight: medium;
+  }
+
+  .instructions {
+    font-size: 1.6;
+    color: #71717a;
+    text-align: left;
+    margin-bottom: 2;
+  }
+
+  .code-block {
+    width: 100%;
+    padding: 1.2;
+    background-color: #1a1a2e;
+    border-color: #2a2a4e;
+    border-width: 0.1;
+    border-radius: 1;
+    font-size: 1.4;
+    color: #50fa7b;
+    margin-bottom: 2;
+  }
+
+  #connect-button {
+    width: 100%;
+    padding: 1.5;
+    background-color: #00d4ff;
+    color: #09090b;
+    border-radius: 1.5;
+    border-width: 0;
+    font-size: 2.5;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1;
+  }
+
+  #use-local {
+    width: 100%;
+    padding: 1.2;
+    background-color: #27272a;
+    color: #a1a1aa;
+    border-radius: 1.5;
+    border-width: 0.1;
+    border-color: #3f3f46;
+    font-size: 2;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .status {
+    font-size: 1.6;
+    color: #71717a;
+    text-align: center;
+    width: 100%;
+    margin-top: 1;
+  }
+</style>
+<div class="connect-panel">
+  <span class="title">Spatial Terminal</span>
+  <span class="subtitle">Connect to your PTY server to get a terminal in your space.</span>
+
+  <span class="label">Server address:</span>
+  <span class="host-display" id="host-display">not set</span>
+
+  <span class="instructions">Run this on your machine to start a PTY server with a public tunnel:</span>
+  <span class="code-block">npx quest-terminal-server</span>
+  <span class="instructions">Then paste the tunnel URL above and connect.</span>
+
+  <button id="connect-button">Connect</button>
+  <button id="use-local">Use localhost:3001</button>
+
+  <span class="status" id="status-text"></span>
+</div>
