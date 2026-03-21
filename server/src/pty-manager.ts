@@ -83,6 +83,10 @@ export function detach(sessionId: string): void {
   }
 }
 
+export function sessionCount(): number {
+  return sessions.size;
+}
+
 export function destroy(sessionId: string): void {
   const session = sessions.get(sessionId);
   if (session) {

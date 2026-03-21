@@ -24,21 +24,25 @@ type ServerMessage = OutputMessage | ExitMessage | ErrorMessage;
 export class WsClient {
   private ws: WebSocket | null = null;
   private url: string;
+  private token: string;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private handlers: Set<MessageHandler> = new Set();
   private _connected = false;
+  private _authenticated = false;
 
-  constructor(url: string) {
+  constructor(url: string, token: string) {
     this.url = url;
+    this.token = token;
   }
 
   get connected(): boolean {
-    return this._connected;
+    return this._connected && this._authenticated;
   }
 
   connect(): void {
     if (this.ws) return;
 
+    this._authenticated = false;
     this.ws = new WebSocket(this.url);
 
     this.ws.onopen = () => {
@@ -47,11 +51,25 @@ export class WsClient {
         clearTimeout(this.reconnectTimer);
         this.reconnectTimer = null;
       }
+      // Send auth token as first message
+      this.ws!.send(JSON.stringify({ type: 'auth', token: this.token }));
     };
 
     this.ws.onmessage = (event) => {
       try {
         const msg: ServerMessage = JSON.parse(event.data as string);
+
+        // Handle auth response
+        if (!this._authenticated && msg.type === 'error') {
+          if (msg.message === 'auth ok') {
+            this._authenticated = true;
+          } else if (msg.message === 'auth failed') {
+            console.error('[ws] auth failed -- bad token');
+            this.ws?.close();
+            return;
+          }
+        }
+
         for (const handler of this.handlers) {
           handler(msg);
         }
@@ -62,6 +80,7 @@ export class WsClient {
 
     this.ws.onclose = () => {
       this._connected = false;
+      this._authenticated = false;
       this.ws = null;
       this.scheduleReconnect();
     };
@@ -77,7 +96,7 @@ export class WsClient {
   }
 
   send(msg: Record<string, unknown>): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === WebSocket.OPEN && this._authenticated) {
       this.ws.send(JSON.stringify(msg));
     }
   }
@@ -102,6 +121,7 @@ export class WsClient {
     this.ws?.close();
     this.ws = null;
     this._connected = false;
+    this._authenticated = false;
   }
 
   private scheduleReconnect(): void {

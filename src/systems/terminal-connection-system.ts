@@ -1,7 +1,7 @@
 import { createSystem } from '@iwsdk/core';
 import { TerminalPanel } from '../components/terminal-panel.js';
 import { WsClient } from '../lib/ws-client.js';
-import { getPtyHost, onPtyHostSet, getWsUrl } from '../lib/pty-config.js';
+import { getPtyHost, getPtyToken, onPtyHostSet, getWsUrl } from '../lib/pty-config.js';
 import { bridges } from './terminal-render-system.js';
 
 let wsClient: WsClient | null = null;
@@ -15,7 +15,6 @@ export class TerminalConnectionSystem extends createSystem({
       this.connectToHost(host);
     }
 
-    // If no host yet, wait for the connection dialog to provide one
     this.cleanupFuncs.push(
       onPtyHostSet((newHost) => {
         if (wsClient) {
@@ -32,7 +31,8 @@ export class TerminalConnectionSystem extends createSystem({
 
   private connectToHost(host: string): void {
     const url = getWsUrl(host);
-    wsClient = new WsClient(url);
+    const token = getPtyToken();
+    wsClient = new WsClient(url, token);
 
     wsClient.onMessage((msg) => {
       for (const entity of this.queries.terminals.entities) {
@@ -50,7 +50,6 @@ export class TerminalConnectionSystem extends createSystem({
 
     wsClient.connect();
 
-    // Spawn for any terminals that already exist
     for (const entity of this.queries.terminals.entities) {
       this.spawnForEntity(entity.index);
     }

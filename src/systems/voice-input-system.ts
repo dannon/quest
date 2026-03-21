@@ -26,10 +26,10 @@ export class VoiceInputSystem extends createSystem({
         VoiceInput.data.transcript[entity.index] = transcript;
 
         if (isFinal) {
-          // Send finalized transcript as terminal input + newline
+          // Paste transcript without newline -- user reviews before pressing Enter
           const bridge = bridges.get(entity.index);
           if (bridge) {
-            bridge.terminal.paste(transcript + '\n');
+            bridge.terminal.paste(transcript);
           }
           VoiceInput.data.transcript[entity.index] = '';
         }

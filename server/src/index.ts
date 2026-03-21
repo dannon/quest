@@ -1,42 +1,29 @@
 import { createServer } from 'http';
+import { randomBytes } from 'crypto';
 import { WebSocketServer } from 'ws';
 import { handleConnection } from './ws-handler.js';
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://orangehack.com').split(',');
+const TOKEN = process.env.PTY_TOKEN || randomBytes(24).toString('base64url');
 
-const httpServer = createServer((req, res) => {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('quest-terminal-server');
+const httpServer = createServer((_req, res) => {
+  res.writeHead(404);
+  res.end();
 });
 
 const wss = new WebSocketServer({
   server: httpServer,
   path: '/ws',
-  verifyClient: ({ origin }: { origin?: string }) => {
-    if (!origin) return true;
-    return ALLOWED_ORIGINS.includes(origin);
-  },
+  maxPayload: 128 * 1024, // 128KB max message size
 });
 
 wss.on('connection', (ws) => {
-  console.log('[ws] client connected');
-  handleConnection(ws);
+  handleConnection(ws, TOKEN);
 });
 
 httpServer.listen(PORT, () => {
   console.log(`[server] listening on :${PORT}`);
+  console.log(`[server] auth token: ${TOKEN}`);
 });
+
+export { TOKEN };

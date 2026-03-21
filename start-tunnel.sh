@@ -8,7 +8,7 @@ set -euo pipefail
 #   ./start-tunnel.sh              # Quick tunnel (random URL)
 #   ./start-tunnel.sh my-hostname  # Named tunnel (requires cloudflared setup)
 #
-# The script prints a URL — open orangehack.com?pty=<that-url> on your Quest.
+# The script prints a URL -- open it on your Quest.
 
 PORT="${PORT:-3001}"
 
@@ -26,9 +26,10 @@ if [ ! -d "server/node_modules" ]; then
   (cd server && npm install)
 fi
 
-# Start PTY server in background
+# Start PTY server in background, capture the auth token from its output
+PTY_LOG=$(mktemp)
 echo "[pty] Starting PTY server on :${PORT}..."
-(cd server && npx tsx src/index.ts) &
+(cd server && npx tsx src/index.ts) > "$PTY_LOG" 2>&1 &
 PTY_PID=$!
 
 cleanup() {
@@ -36,35 +37,49 @@ cleanup() {
   echo "[shutdown] Stopping..."
   kill $PTY_PID 2>/dev/null || true
   kill $TUNNEL_PID 2>/dev/null || true
+  rm -f "$PTY_LOG"
   exit 0
 }
 trap cleanup SIGINT SIGTERM
 
-sleep 1
+# Wait for the server to start and extract the token
+AUTH_TOKEN=""
+for i in $(seq 1 15); do
+  AUTH_TOKEN=$(grep -oP 'auth token: \K.*' "$PTY_LOG" 2>/dev/null || true)
+  if [ -n "$AUTH_TOKEN" ]; then
+    break
+  fi
+  sleep 1
+done
+
+if [ -z "$AUTH_TOKEN" ]; then
+  echo "[error] Could not get auth token. Server output:"
+  cat "$PTY_LOG"
+  cleanup
+fi
+
+# Tail server logs in background
+tail -f "$PTY_LOG" &
 
 if [ "${1:-}" != "" ]; then
-  # Named tunnel — user must have already run:
-  #   cloudflared tunnel create <name>
-  #   cloudflared tunnel route dns <name> <hostname>
   echo "[tunnel] Starting named tunnel: $1"
   cloudflared tunnel run "$1" &
   TUNNEL_PID=$!
   echo ""
   echo "========================================="
   echo " PTY server running on named tunnel"
+  echo " Auth token: ${AUTH_TOKEN}"
+  echo ""
   echo " Open on Quest:"
-  echo "   orangehack.com?pty=$1"
+  echo "   https://orangehack.com?pty=$1&token=${AUTH_TOKEN}"
   echo "========================================="
 else
-  # Quick tunnel — cloudflared generates a random URL
   echo "[tunnel] Starting quick tunnel..."
 
-  # cloudflared quick tunnel outputs the URL to stderr
   TUNNEL_LOG=$(mktemp)
   cloudflared tunnel --url "http://localhost:${PORT}" 2>"$TUNNEL_LOG" &
   TUNNEL_PID=$!
 
-  # Wait for the tunnel URL to appear
   TUNNEL_URL=""
   for i in $(seq 1 30); do
     TUNNEL_URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1 || true)
@@ -80,18 +95,17 @@ else
     cleanup
   fi
 
-  # Strip https:// for the pty param
   TUNNEL_HOST="${TUNNEL_URL#https://}"
 
   echo ""
   echo "========================================="
   echo " PTY server tunneled at:"
   echo "   ${TUNNEL_URL}"
+  echo " Auth token: ${AUTH_TOKEN}"
   echo ""
   echo " Open on Quest:"
-  echo "   https://orangehack.com?pty=${TUNNEL_HOST}"
+  echo "   https://orangehack.com?pty=${TUNNEL_HOST}&token=${AUTH_TOKEN}"
   echo "========================================="
 fi
 
-# Wait for either process to exit
 wait
